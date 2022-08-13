@@ -9,6 +9,7 @@ import ir.viratech.wopihost.util.file.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -76,11 +77,11 @@ public class WopiController {
     }
 
     @GetMapping("/files/download/{fileName}")
-    public ResponseEntity<?> downloadFile(@PathVariable String fileName) throws FileNotFoundException {
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String fileName) throws FileNotFoundException {
         final File iFile = new File(getFilePathString(fileName));
         final long resourceLength = iFile.length();
         final long lastModified = iFile.lastModified();
-        final InputStream resource = new FileInputStream(iFile);
+        final InputStreamResource resource = new InputStreamResource(new FileInputStream(iFile));
 
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=" + fileName)
@@ -89,6 +90,7 @@ public class WopiController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
+
 
     private long getFileSize(String fileName) throws IOException {
         return Files.size(Paths.get(config.getFileDirectoryPath()).resolve(fileName));

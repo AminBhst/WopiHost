@@ -34,13 +34,13 @@ public class WopiClientBaseController {
      * to start working with office online</p>
      */
     @PostMapping(value = "/entry-point")
-    public EntryPointDTO generateWopiUrl(@RequestPart("file") MultipartFile file) throws IOException, InvalidFileTypeException {
+    public String generateWopiUrl(@RequestPart("file") MultipartFile file) throws IOException, InvalidFileTypeException {
         String uuid = UUID.randomUUID().toString();
         String originalFilename = file.getOriginalFilename();
         validateFileType(originalFilename);
         String fileName = uuid + originalFilename.substring(originalFilename.lastIndexOf("."));
         writeFile(file,fileName);
-        return new EntryPointDTO(urlGenerator.generate(uuid));
+        return urlGenerator.generate(uuid);
     }
 
     private void writeFile(MultipartFile file,String fileName) throws IOException {
