@@ -40,6 +40,7 @@ public class WopiController {
     @GetMapping("/files/{fileName}")
     public CheckFileInfoDTO wopi(@PathVariable("fileName") String fileName) {
         CheckFileInfoDTO cfi = new CheckFileInfoDTO();
+        log.info("REQUEST REACHED");
         try {
             cfi.setBaseFileName(fileName);
             cfi.setVersion("1");
@@ -54,6 +55,7 @@ public class WopiController {
 
     @PostMapping("/files/{fileName}/contents")
     public void updateFileContent(@PathVariable("fileName") String fileName, @RequestBody byte[] bytes) {
+        log.info("REQUEST REACHED");
         File file = Paths.get(config.getFileDirectoryPath()).resolve(fileName).toFile();
         try (FileOutputStream fop = new FileOutputStream(file)) {
             fop.write(bytes);
@@ -66,6 +68,7 @@ public class WopiController {
 
     @GetMapping("/files/{fileName}/contents")
     public byte[] getFileContent(@PathVariable("fileName") String fileName) {
+        log.info("REQUEST REACHED");
         try {
             return IOUtils.toByteArray(new FileInputStream(getFilePathString(fileName)));
         } catch (Throwable t) {
