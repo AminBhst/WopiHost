@@ -39,19 +39,17 @@ public class WopiController {
 
     @GetMapping("/files/{fileName}")
     public CheckFileInfoDTO wopi(@PathVariable("fileName") String fileName) {
+        CheckFileInfoDTO cfi = new CheckFileInfoDTO();
         try {
-            CheckFileInfoDTO cfi = new CheckFileInfoDTO();
             cfi.setBaseFileName(fileName);
             cfi.setVersion("1");
             cfi.setOwnerId("KATEB");
             cfi.setUserFriendlyName("KATEB");
             cfi.setSize(getFileSize(fileName));
-            return cfi;
         } catch (Throwable t) {
-            log.error("Error write", t);
+            log.error("File not created");
         }
-        log.error("File not created");
-        return null;
+        return cfi;
     }
 
     @PostMapping("/files/{fileName}/contents")
