@@ -54,15 +54,15 @@ public class FileUtils {
         return new String(bytes, StandardCharsets.UTF_8);
     }
 
-    public static Long getFileSize(String fileName) {
-        Long fileSize = null;
-        try {
-            return Files.size(config(fileName));
-        } catch (IOException e) {
-            log.warn("Could not get file size for {}", fileName);
-        }
-        return fileSize;
-    }
+//    public static Long getFileSize(String fileName) {
+//        Long fileSize = null;
+//        try {
+//            return Files.size(config(fileName));
+//        } catch (IOException e) {
+//            log.warn("Could not get file size for {}", fileName);
+//        }
+//        return fileSize;
+//    }
 
     public static boolean deleteFile(String fileName) {
         return getFile(fileName).delete();

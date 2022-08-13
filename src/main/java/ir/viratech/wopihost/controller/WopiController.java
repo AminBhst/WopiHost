@@ -2,6 +2,9 @@ package ir.viratech.wopihost.controller;
 
 import ir.viratech.wopihost.config.ConfigProperties;
 import ir.viratech.wopihost.dto.CheckFileInfoDTO;
+import ir.viratech.wopihost.dto.EntryPointDTO;
+import ir.viratech.wopihost.exception.InvalidFileTypeException;
+import ir.viratech.wopihost.util.ValidFileTypes;
 import ir.viratech.wopihost.util.file.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -9,10 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * Services defined in these class should not be called directly and must be called automatically
