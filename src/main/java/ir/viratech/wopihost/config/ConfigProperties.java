@@ -19,4 +19,5 @@ public class ConfigProperties {
     private String officeWordEditorFrameUrl;
     private String powerPointEditorFrameUrl;
     private String excelEditorFrameUrl;
+    private String fileDirectoryPath;
 }

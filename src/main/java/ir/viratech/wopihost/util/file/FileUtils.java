@@ -57,7 +57,7 @@ public class FileUtils {
     public static Long getFileSize(String fileName) {
         Long fileSize = null;
         try {
-            return Files.size(getFilePath(fileName));
+            return Files.size(config(fileName));
         } catch (IOException e) {
             log.warn("Could not get file size for {}", fileName);
         }

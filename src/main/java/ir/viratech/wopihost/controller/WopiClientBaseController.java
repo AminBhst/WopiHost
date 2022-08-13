@@ -5,6 +5,7 @@ import ir.viratech.wopihost.exception.InvalidFileTypeException;
 import ir.viratech.wopihost.service.generator.WopiUrlGenerator;
 import ir.viratech.wopihost.util.file.FileType;
 import ir.viratech.wopihost.util.file.FileUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
