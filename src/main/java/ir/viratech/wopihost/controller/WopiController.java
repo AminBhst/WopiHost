@@ -31,6 +31,7 @@ public class WopiController {
     @GetMapping("/files/{fileName}")
     public CheckFileInfoDTO wopi(@PathVariable("fileName") String fileName) {
         try {
+            System.out.println("Accepted===============");
             CheckFileInfoDTO cfi = new CheckFileInfoDTO();
             cfi.setBaseFileName(fileName);
             cfi.setVersion("1");
