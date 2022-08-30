@@ -68,7 +68,7 @@ public class WopiController {
 
 
     @GetMapping("/files/{base64Json}/download")
-    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable("base64Json") String base64Json) throws FileNotFoundException, FileNotFoundException {
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable("base64Json") String base64Json) throws FileNotFoundException {
         return wopiHostService.downloadFile(base64Json);
     }
 

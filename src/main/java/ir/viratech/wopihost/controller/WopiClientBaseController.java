@@ -45,8 +45,6 @@ public class WopiClientBaseController {
         String uuid = UUID.randomUUID().toString();
         String originalFilename = file.getOriginalFilename();
         validateFileType(originalFilename);
-        String fileName = uuid + originalFilename.substring(originalFilename.lastIndexOf("."));
-        writeFile(file, fileName);
 
         HashMap<String, String> params = new HashMap<>();
         params.put("username", username);
@@ -58,15 +56,17 @@ public class WopiClientBaseController {
 
         WopiFile existingWopiFile = wopiFileRepository.getFirstByClientDefinedIdentifierAndClientName(identifier, clientName);
         if (existingWopiFile == null) {
+            String tempFileName = uuid + originalFilename.substring(originalFilename.lastIndexOf("."));
+            writeFile(file, tempFileName);
             WopiFile wopiFile = new WopiFile();
             String fileOwner = StringUtils.isNotBlank(owner) ? owner : username;
             wopiFile.setOwner(fileOwner);
-            wopiFile.setTempFileName(fileName);
+            wopiFile.setTempFileName(tempFileName);
             wopiFile.setOriginalFileName(originalFilename);
             wopiFile.setClientName(clientName);
             wopiFile.setClientDefinedIdentifier(identifier);
             wopiFileRepository.save(wopiFile);
-            params.put("tempFileName", fileName);
+            params.put("tempFileName", tempFileName);
             params.putIfAbsent("fileOwner", username);
         } else {
             params.put("tempFileName", existingWopiFile.getTempFileName());
