@@ -32,8 +32,6 @@ public class FileInfo implements Serializable {
     @JsonProperty("UserFriendlyName")
     private String UserFriendlyName;
 
-    @JsonProperty("UserId")
-    private String userId;
 
 
     /**
@@ -86,6 +84,9 @@ public class FileInfo implements Serializable {
      */
     @JsonProperty("UserCanNotWriteRelative")
     private boolean userCanNotWriteRelative = true;
+
+    @JsonProperty("IsAnonymousUser")
+    private boolean isAnonymousUser = false;
 
 
     @Override
