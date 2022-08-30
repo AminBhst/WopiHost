@@ -16,7 +16,7 @@ public class ExcelUrlGenerator implements WopiUrlGenerator {
 
 
     @Override
-    public String generate(String fileName) {
-        return String.format(urlFormat, config.getExcelEditorFrameUrl(), fileName + ".xls");
+    public String generate(String base64Json) {
+        return String.format(urlFormat, config.getExcelEditorFrameUrl(), base64Json);
     }
 }

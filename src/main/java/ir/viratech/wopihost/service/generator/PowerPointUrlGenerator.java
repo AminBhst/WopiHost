@@ -15,7 +15,7 @@ public class PowerPointUrlGenerator implements WopiUrlGenerator {
     }
 
     @Override
-    public String generate(String fileName) {
-        return String.format(urlFormat, config.getPowerPointEditorFrameUrl(), fileName + ".pptx");
+    public String generate(String base64) {
+        return String.format(urlFormat, config.getPowerPointEditorFrameUrl(), base64);
     }
 }

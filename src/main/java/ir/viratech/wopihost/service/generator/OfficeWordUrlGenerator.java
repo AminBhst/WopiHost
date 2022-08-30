@@ -15,7 +15,7 @@ public class OfficeWordUrlGenerator implements WopiUrlGenerator {
     }
 
     @Override
-    public String generate(String fileName) {
-        return String.format(urlFormat, config.getOfficeWordEditorFrameUrl(), fileName + ".docx");
+    public String generate(String base64) {
+        return String.format(urlFormat, config.getOfficeWordEditorFrameUrl(), base64);
     }
 }
