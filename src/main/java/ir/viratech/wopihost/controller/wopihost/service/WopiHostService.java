@@ -102,6 +102,7 @@ public class WopiHostService {
         if (fileName != null && fileName.length() > 0) {
             File file = new File(filePath + fileName);
             if (file.exists()) {
+                info.setUserFriendlyName("A RANDOM USER");
                 info.setBaseFileName(file.getName());
                 info.setSize(file.length());
                 info.setOwnerId("admin");

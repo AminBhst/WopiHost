@@ -63,6 +63,9 @@ public class FileInfo implements Serializable {
     @JsonProperty("SupportsUpdate")
     private boolean supportsUpdate = true;
 
+    @JsonProperty("UserFriendlyName")
+    private String userFriendlyName;
+
     /**
      * if the host supports the GetLock operation.
      */
@@ -168,6 +171,14 @@ public class FileInfo implements Serializable {
 
     public void setUserCanNotWriteRelative(boolean userCanNotWriteRelative) {
         this.userCanNotWriteRelative = userCanNotWriteRelative;
+    }
+
+    public String getUserFriendlyName() {
+        return userFriendlyName;
+    }
+
+    public void setUserFriendlyName(String userFriendlyName) {
+        this.userFriendlyName = userFriendlyName;
     }
 
     @Override
