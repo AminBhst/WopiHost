@@ -1,9 +1,9 @@
-package ir.viratech.wopihost.controller.wopihost.service;
+package ir.viratech.wopihost.service;
 
-import ir.viratech.wopihost.controller.wopihost.controller.WopiHostController;
-import ir.viratech.wopihost.controller.wopihost.entity.LockInfo;
-import ir.viratech.wopihost.controller.wopihost.entity.WopiRequestHeader;
-import ir.viratech.wopihost.controller.wopihost.entity.WopiResponseHeader;
+import ir.viratech.wopihost.entity.LockInfo;
+import ir.viratech.wopihost.entity.WopiRequestHeader;
+import ir.viratech.wopihost.entity.WopiResponseHeader;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-/**
- * Handle lock requests
- *
- * @author ethendev
- * @date 2019/10/27
- */
+@Slf4j
 @Service
 public class WopiLockService {
 
@@ -32,8 +27,6 @@ public class WopiLockService {
     private LockRepository lockRepository;
 
     private static final String EMPTY_STRING = "";
-
-    private Logger logger = LoggerFactory.getLogger(WopiHostController.class);
 
     /**
      * Processes a Lock request
@@ -210,7 +203,7 @@ public class WopiLockService {
             fop.write(content);
             fop.flush();
         } catch (IOException e) {
-            logger.error("write file failed, errMsg: {}", e);
+            log.error("write file failed, errMsg: {}", e);
         }
     }
 

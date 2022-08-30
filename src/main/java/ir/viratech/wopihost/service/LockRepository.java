@@ -1,18 +1,12 @@
-package ir.viratech.wopihost.controller.wopihost.service;
+package ir.viratech.wopihost.service;
 
-import ir.viratech.wopihost.controller.wopihost.entity.LockInfo;
-import org.springframework.stereotype.Service;
+import ir.viratech.wopihost.entity.LockInfo;
+import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * save and update the file lock info from wopi client
- *
- * @author ethendev
- * @date 2019/10/27
- */
-@Service
+@Repository
 public class LockRepository {
 
     private Map<String, LockInfo> map = new ConcurrentHashMap<>();

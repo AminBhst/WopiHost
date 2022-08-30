@@ -1,12 +1,10 @@
-package ir.viratech.wopihost.controller.wopihost.entity;
+package ir.viratech.wopihost.entity;
 
 import java.time.LocalDateTime;
 
 /**
  * the lock information stored in wopi host
  *
- * @author ethendev
- * @date 2019/10/26
  */
 public class LockInfo {
 

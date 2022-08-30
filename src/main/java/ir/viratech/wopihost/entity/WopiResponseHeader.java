@@ -1,11 +1,5 @@
-package ir.viratech.wopihost.controller.wopihost.entity;
+package ir.viratech.wopihost.entity;
 
-/**
- * Wopi response header when handles lock
- *
- * @author ethendev
- * @date 2019/10/26
- */
 public class WopiResponseHeader {
     public final static String HOST_ENDPOINT = "X-WOPI-HostEndpoint";
     public final static String INVALID_FILE_NAME_ERROR = "X-WOPI-InvalidFileNameError";

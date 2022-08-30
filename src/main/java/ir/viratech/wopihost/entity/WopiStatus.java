@@ -1,4 +1,4 @@
-package ir.viratech.wopihost.controller.wopihost.entity;
+package ir.viratech.wopihost.entity;
 
 /**
  * @author ethen

@@ -1,16 +1,13 @@
-package ir.viratech.wopihost.controller.wopihost.entity;
+package ir.viratech.wopihost.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-/**
- * File property object, because wopi does not follow the hump naming rules,
- * we need to specify the alias with @JsonProperty
- *
- * @author ethendev
- * @date 2017/4/15
- */
+@Getter
+@Setter
 public class FileInfo implements Serializable {
 
     /**
@@ -30,6 +27,11 @@ public class FileInfo implements Serializable {
      */
     @JsonProperty("Size")
     private long size;
+
+
+    @JsonProperty("UserFriendlyName")
+    private String UserFriendlyName;
+
 
     /**
      * A 256 bit SHA-2-encoded hash of the file contents, as a Base64-encoded string.
@@ -63,9 +65,6 @@ public class FileInfo implements Serializable {
     @JsonProperty("SupportsUpdate")
     private boolean supportsUpdate = true;
 
-    @JsonProperty("UserFriendlyName")
-    private String userFriendlyName;
-
     /**
      * if the host supports the GetLock operation.
      */
@@ -85,101 +84,6 @@ public class FileInfo implements Serializable {
     @JsonProperty("UserCanNotWriteRelative")
     private boolean userCanNotWriteRelative = true;
 
-    public String getBaseFileName() {
-        return baseFileName;
-    }
-
-    public void setBaseFileName(String baseFileName) {
-        this.baseFileName = baseFileName;
-    }
-
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public String getSha256() {
-        return sha256;
-    }
-
-    public void setSha256(String sha256) {
-        this.sha256 = sha256;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long version) {
-        this.version = version;
-    }
-
-    public boolean isAllowExternalMarketplace() {
-        return allowExternalMarketplace;
-    }
-
-    public void setAllowExternalMarketplace(boolean allowExternalMarketplace) {
-        this.allowExternalMarketplace = allowExternalMarketplace;
-    }
-
-    public boolean isUserCanWrite() {
-        return userCanWrite;
-    }
-
-    public void setUserCanWrite(boolean userCanWrite) {
-        this.userCanWrite = userCanWrite;
-    }
-
-    public boolean isSupportsUpdate() {
-        return supportsUpdate;
-    }
-
-    public void setSupportsUpdate(boolean supportsUpdate) {
-        this.supportsUpdate = supportsUpdate;
-    }
-
-    public boolean isSupportsGetLock() {
-        return supportsGetLock;
-    }
-
-    public void setSupportsGetLock(boolean supportsGetLock) {
-        this.supportsGetLock = supportsGetLock;
-    }
-
-    public boolean isSupportsLocks() {
-        return supportsLocks;
-    }
-
-    public void setSupportsLocks(boolean supportsLocks) {
-        this.supportsLocks = supportsLocks;
-    }
-
-    public boolean isUserCanNotWriteRelative() {
-        return userCanNotWriteRelative;
-    }
-
-    public void setUserCanNotWriteRelative(boolean userCanNotWriteRelative) {
-        this.userCanNotWriteRelative = userCanNotWriteRelative;
-    }
-
-    public String getUserFriendlyName() {
-        return userFriendlyName;
-    }
-
-    public void setUserFriendlyName(String userFriendlyName) {
-        this.userFriendlyName = userFriendlyName;
-    }
 
     @Override
     public String toString() {

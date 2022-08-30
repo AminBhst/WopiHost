@@ -1,14 +1,14 @@
-package ir.viratech.wopihost.controller.wopihost.service;
+package ir.viratech.wopihost.service;
 
-import ir.viratech.wopihost.controller.wopihost.controller.WopiHostController;
-import ir.viratech.wopihost.controller.wopihost.entity.FileInfo;
-import ir.viratech.wopihost.controller.wopihost.entity.WopiRequestHeader;
-import ir.viratech.wopihost.controller.wopihost.entity.WopiStatus;
+import ir.viratech.wopihost.entity.FileInfo;
+import ir.viratech.wopihost.entity.WopiRequestHeader;
+import ir.viratech.wopihost.entity.WopiStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,15 +16,13 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Handle wopi protocol requests
- *
- * @author ethendev
- * @date 2019/10/27
- */
+@Slf4j
 @Service
 public class WopiHostService {
 
@@ -34,26 +32,25 @@ public class WopiHostService {
     @Value("${wopi.fileDirectoryPath}")
     private String filePath;
 
-    private static final String CHARSET_UTF8 = "UTF-8";
-
-    private Logger logger = LoggerFactory.getLogger(WopiHostController.class);
 
     /**
      * Retrieves a file from a host.
-     * @param name a file ID of a file managed by host
+     *
+     * @param base64Json a file ID of a file managed by host
      * @param response
      */
-    public void getFile(String name, HttpServletResponse response) {
-        String path = filePath + name;
-        File file = new File(path);
+    public void getFile(String base64Json, HttpServletResponse response) {
+        JSONObject json = decodeBase64ToJson(base64Json);
+        Path path = Paths.get(filePath).resolve(json.get("tempFileName").toString());
+        File file = path.toFile();
         String filename = file.getName();
-        try (InputStream fis = new BufferedInputStream(new FileInputStream(path));
+        try (InputStream fis = new BufferedInputStream(new FileInputStream(path.toString()));
              OutputStream toClient = new BufferedOutputStream(response.getOutputStream())) {
             byte[] buffer = new byte[fis.available()];
             fis.read(buffer);
             response.reset();
             response.addHeader("Content-Disposition", "attachment;filename=" +
-                    new String(filename.getBytes(CHARSET_UTF8), "ISO-8859-1"));
+                    new String(filename.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
             response.addHeader("Content-Length", String.valueOf(file.length()));
 
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
@@ -61,31 +58,35 @@ public class WopiHostService {
             toClient.flush();
         } catch (IOException e) {
             response.setStatus(WopiStatus.NOT_FOUND.value());
-            logger.error("getFile failed, errMsg: {}", e);
+            log.error("getFile failed, errMsg: {}", e.getMessage(), e);
         }
     }
 
     /**
      * Updates a file’s binary contents.
-     * @param name a file ID of a file managed by host
+     *
+     * @param base64Json    a file ID of a file managed by host
      * @param content the full binary contents of the file
      * @param request
      * @return
      */
-    public ResponseEntity postFile(String name, byte[] content, HttpServletRequest request) {
+    public ResponseEntity postFile(String base64Json, byte[] content, HttpServletRequest request) {
+        JSONObject json = decodeBase64ToJson(base64Json);
+        String tempFileName = json.get("tempFileName").toString();
+
         ResponseEntity response;
+        File file = Paths.get(filePath).resolve(tempFileName).toFile();
         String requestLock = request.getHeader(WopiRequestHeader.LOCK);
-        File file = new File(filePath + name);
         if (file.exists()) {
             response = lockService.putFile(request, file, content);
             if (response.getStatusCodeValue() != WopiStatus.OK.value()) {
-                logger.warn("update {} failed, status: {}", name, response);
+                log.warn("update {} failed, status: {}", tempFileName, response);
             }
         } else {
             response = ResponseEntity.status(WopiStatus.NOT_FOUND.value()).build();
-            logger.error("postFile failed, file not found");
+            log.error("postFile failed, file not found");
         }
-        logger.info("postFile -- filename: {}, response: {} , requestLock: {}", name, response, requestLock);
+        log.info("postFile -- filename: {}, response: {} , requestLock: {}", tempFileName, response, requestLock);
         return response;
     }
 
@@ -93,19 +94,23 @@ public class WopiHostService {
      * Returns information about a file, a user’s permissions on that file,
      * and general information about the capabilities that the WOPI host has on the file.
      *
-     * @param fileName a file ID of a file managed by host
-     * @return
-     * @throws Exception
+     * @param base64Json
      */
-    public ResponseEntity<FileInfo> getFileInfo(String fileName) throws Exception {
+    public ResponseEntity<FileInfo> getFileInfo(String base64Json) throws Exception {
+        JSONObject json = decodeBase64ToJson(base64Json);
+        String tempFileName = json.get("tempFileName").toString();
+        String originalFileName = json.get("originalFileName").toString();
+        String fileOwner = json.get("fileOwner").toString();
+        String username = json.get("username").toString();
+
         FileInfo info = new FileInfo();
-        if (fileName != null && fileName.length() > 0) {
-            File file = new File(filePath + fileName);
+        if (tempFileName != null && tempFileName.length() > 0) {
+            File file = Paths.get(filePath).resolve(tempFileName).toFile();
             if (file.exists()) {
-                info.setUserFriendlyName("A RANDOM USER");
-                info.setBaseFileName(file.getName());
+                info.setBaseFileName(originalFileName);
                 info.setSize(file.length());
-                info.setOwnerId("admin");
+                info.setUserFriendlyName(username);
+                info.setOwnerId(fileOwner);
                 info.setVersion(file.lastModified());
                 info.setSha256(getHash256(file));
             } else {
@@ -115,8 +120,11 @@ public class WopiHostService {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(info);
     }
 
-    public ResponseEntity handleLock(String fileName, HttpServletRequest request) {
-        ResponseEntity response = null;
+    public ResponseEntity handleLock(String base64Json, HttpServletRequest request) {
+        JSONObject json = decodeBase64ToJson(base64Json);
+        String fileName = json.get("tempFileName").toString();
+
+        ResponseEntity response;
         String wopiOverride = request.getHeader(WopiRequestHeader.OVERRIDE);
         String requestLock = request.getHeader(WopiRequestHeader.LOCK);
         String oldLock = request.getHeader(WopiRequestHeader.OLD_LOCK);
@@ -142,7 +150,7 @@ public class WopiHostService {
                 response = ResponseEntity.status(WopiStatus.NOT_IMPLEMENTED.value()).build();
                 break;
         }
-        logger.info("handleLock -- filename: {}, override: {}, response: {}, requestLock: {}, oldLock: {}",
+        log.info("handleLock -- filename: {}, override: {}, response: {}, requestLock: {}, oldLock: {}",
                 fileName, wopiOverride, response, requestLock, oldLock);
         return response;
     }
@@ -170,4 +178,28 @@ public class WopiHostService {
         return value;
     }
 
+
+    private JSONObject decodeBase64ToJson(String base64) {
+        byte[] jsonBytes = java.util.Base64.getDecoder().decode(base64);
+        String jsonString = new String(jsonBytes, StandardCharsets.UTF_8);
+        return new JSONObject(jsonString);
+    }
+
+    public ResponseEntity<InputStreamResource> downloadFile(String base64Json) throws FileNotFoundException {
+        JSONObject json = decodeBase64ToJson(base64Json);
+        String tempFileName = json.get("tempFileName").toString();
+        String originalFileName = json.get("originalFileName").toString();
+        Path path = Paths.get(filePath).resolve(tempFileName);
+        final File file = path.toFile();
+        final long resourceLength = file.length();
+        final long lastModified = file.lastModified();
+        final InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=" + originalFileName)
+                .contentLength(resourceLength)
+                .lastModified(lastModified)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
 }

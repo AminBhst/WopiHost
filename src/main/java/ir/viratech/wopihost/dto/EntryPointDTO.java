@@ -6,10 +6,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class EntryPointDTO {
-
-    public EntryPointDTO(String officeOnlineUrl) {
-        this.officeOnlineUrl = officeOnlineUrl;
-    }
-
-    private String officeOnlineUrl;
+    private String username;
+    private String clientName;
+    private String identifier;
 }
