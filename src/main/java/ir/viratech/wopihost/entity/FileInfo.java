@@ -29,8 +29,11 @@ public class FileInfo implements Serializable {
     private long size;
 
 
-    @JsonProperty("UserFriendlyName")
-    private String UserFriendlyName;
+//    @JsonProperty("UserFriendlyName")
+//    private String UserFriendlyName;
+
+    @JsonProperty("UserId")
+    private String userId;
 
 
     /**

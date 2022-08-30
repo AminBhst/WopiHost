@@ -109,7 +109,7 @@ public class WopiHostService {
             if (file.exists()) {
                 info.setBaseFileName(originalFileName);
                 info.setSize(file.length());
-                info.setUserFriendlyName(username);
+                info.setUserId(username);
                 info.setOwnerId(fileOwner);
                 info.setVersion(file.lastModified());
                 info.setSha256(getHash256(file));
