@@ -1,14 +1,14 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/WopiHost
-    driver-class-name: org.postgresql.Driver
-    username: viratech
-    password: aammiinn
-
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
-    hibernate:
-      ddl-auto: update
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://127.0.0.1:5432/WopiHost
+#    driver-class-name: org.postgresql.Driver
+#    username: viratech
+#    password: aammiinn
+#
+#  jpa:
+#    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+#    hibernate:
+#      ddl-auto: update
 
 wopi:
   username: sysadmin
