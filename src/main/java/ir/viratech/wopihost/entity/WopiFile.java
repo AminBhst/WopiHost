@@ -28,6 +28,12 @@ public class WopiFile {
     @Column(name = "last_modified")
     private Date lastModified;
 
+    @Column(name = "is_session_active")
+    private boolean isSessionActive;
+
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "client_defined_identifier")
     private String clientDefinedIdentifier;
 

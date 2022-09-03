@@ -85,6 +85,7 @@ public class FileInfo implements Serializable {
     @JsonProperty("UserCanNotWriteRelative")
     private boolean userCanNotWriteRelative = true;
 
+
     @JsonProperty("IsAnonymousUser")
     private boolean isAnonymousUser = false;
 

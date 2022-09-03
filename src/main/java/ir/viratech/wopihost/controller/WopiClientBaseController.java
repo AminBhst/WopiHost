@@ -46,33 +46,30 @@ public class WopiClientBaseController {
         String originalFilename = file.getOriginalFilename();
         validateFileType(originalFilename);
 
-        HashMap<String, String> params = new HashMap<>();
-        params.put("username", username);
-        params.put("originalFileName", originalFilename);
-        params.put("clientName", clientName);
-
-        if (StringUtils.isNotBlank(owner))
-            params.put("fileOwner", owner);
+        WopiFile wopiFile = new WopiFile();
+        String tempFileName = uuid + originalFilename.substring(originalFilename.lastIndexOf("."));
+        String fileOwner = StringUtils.isNotBlank(owner) ? owner : username;
 
         WopiFile existingWopiFile = wopiFileRepository.getFirstByClientDefinedIdentifierAndClientName(identifier, clientName);
-        if (existingWopiFile == null) {
-            String tempFileName = uuid + originalFilename.substring(originalFilename.lastIndexOf("."));
-            writeFile(file, tempFileName);
-            WopiFile wopiFile = new WopiFile();
-            String fileOwner = StringUtils.isNotBlank(owner) ? owner : username;
-            wopiFile.setOwner(fileOwner);
-            wopiFile.setTempFileName(tempFileName);
-            wopiFile.setOriginalFileName(originalFilename);
-            wopiFile.setClientName(clientName);
-            wopiFile.setClientDefinedIdentifier(identifier);
-            wopiFileRepository.save(wopiFile);
-            params.put("tempFileName", tempFileName);
-            params.putIfAbsent("fileOwner", username);
+        if (existingWopiFile != null) {
+            fileOwner = existingWopiFile.getOwner();
+            tempFileName = existingWopiFile.getTempFileName();
         } else {
-            params.put("tempFileName", existingWopiFile.getTempFileName());
-            params.putIfAbsent("fileOwner", existingWopiFile.getOwner());
+            writeFile(file, tempFileName);
         }
 
+        wopiFile.setTempFileName(tempFileName);
+        wopiFile.setOwner(fileOwner);
+        wopiFile.setOriginalFileName(originalFilename);
+        wopiFile.setUsername(username);
+        wopiFile.setClientName(clientName);
+        wopiFile.setClientDefinedIdentifier(identifier);
+        wopiFile.setSessionActive(false);
+        wopiFileRepository.save(wopiFile);
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("identifier", identifier);
+        params.put("tempFileName", tempFileName);
         String base64Json = encodeBase64Json(params);
         return urlGenerator.generate(base64Json);
     }

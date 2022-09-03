@@ -1,8 +1,10 @@
 package ir.viratech.wopihost.service;
 
 import ir.viratech.wopihost.entity.FileInfo;
+import ir.viratech.wopihost.entity.WopiFile;
 import ir.viratech.wopihost.entity.WopiRequestHeader;
 import ir.viratech.wopihost.entity.WopiStatus;
+import ir.viratech.wopihost.repository.WopiFileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONObject;
@@ -28,6 +30,9 @@ public class WopiHostService {
 
     @Autowired
     private WopiLockService lockService;
+
+    @Autowired
+    private WopiFileRepository wopiFileRepository;
 
     @Value("${wopi.fileDirectoryPath}")
     private String filePath;
@@ -99,20 +104,21 @@ public class WopiHostService {
     public ResponseEntity<FileInfo> getFileInfo(String base64Json) throws Exception {
         JSONObject json = decodeBase64ToJson(base64Json);
         String tempFileName = json.get("tempFileName").toString();
-        String originalFileName = json.get("originalFileName").toString();
-        String fileOwner = json.get("fileOwner").toString();
-        String username = json.get("username").toString();
+        String identifier = json.get("identifier").toString();
+        WopiFile wopiFile = wopiFileRepository.findFirstNonActiveFile(identifier);
 
         FileInfo info = new FileInfo();
         if (tempFileName != null && tempFileName.length() > 0) {
             File file = Paths.get(filePath).resolve(tempFileName).toFile();
             if (file.exists()) {
-                info.setBaseFileName(originalFileName);
+                info.setBaseFileName(wopiFile.getOriginalFileName());
                 info.setSize(file.length());
-                info.setUserFriendlyName(username);
-                info.setOwnerId(fileOwner);
+                info.setUserFriendlyName(wopiFile.getUsername());
+                info.setOwnerId(wopiFile.getOwner());
                 info.setVersion(file.lastModified());
                 info.setSha256(getHash256(file));
+                wopiFile.setSessionActive(true);
+                wopiFileRepository.save(wopiFile);
             } else {
                 return ResponseEntity.status(WopiStatus.NOT_FOUND.value()).build();
             }
